@@ -9,7 +9,8 @@ public class
     //public float force;
     public float speed;
     public float jumpPower;
-
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
 
     public Rigidbody2D myBody;
     private Vector2 inputForce;
@@ -23,12 +24,21 @@ public class
     void Start()
     {
         moveInput = InputSystem.actions.FindAction("Move");
+        animator = GetComponent<Animator>();
     }
 
 
     void Update()
     {
         inputForce = moveInput.ReadValue<Vector2>();
+        animator.SetFloat("speed", myBody.linearVelocity.magnitude); //for walking animation
+        
+        
+        //flipping not working because i  am trying to us enew input system?
+      //  inputForce.x = Input.GetAxisRaw("Horizontal");
+        //if (inputForce.x > 0)       spriteRenderer.flipX = false; 
+       // else if (inputForce.x < 0)  spriteRenderer.flipX = true; //flip that thang!
+
     }
 
 
@@ -41,11 +51,20 @@ public class
         {
             myBody.linearVelocityY = inputForce.y * jumpPower;
             onGround = false;
+          
         }
         else
         {
             onGround = Physics2D.OverlapCircle(groundChecker.position, checkSize, groundLayer);
+                animator.SetBool("Is Jumping", false);
+           
         }
+
+        if (onGround == false)
+        {
+            animator.SetBool("Is Jumping", true);
+        }
+       
 
     }
 }
